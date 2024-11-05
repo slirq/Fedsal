@@ -203,4 +203,17 @@ if __name__ == '__main__':
     process_fedsal(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
     args.alg='salstr'
     args.n_se = args.n_rw + args.n_dg
+splitedData, df_stats = setupGC.prepareData_multiDS(args,args.datapath, args.data_group, args.batch_size, convert_x=args.convert_x, seed=seed_dataSplit)
+    print("Done")
+
+    # save statistics of data on clients
+    if args.repeat is None:
+        outf = os.path.join(outpath, f'stats_trainData{suffix}.csv')
+    else:
+        outf = os.path.join(outpath, "repeats", f'{args.repeat}_stats_trainData{suffix}.csv')
+    df_stats.to_csv(outf)
+    print(f"Wrote to {outf}")
+
+    init_clients, init_server, init_idx_clients = setupGC.setup_devices(splitedData, args)
+    print("\nDone setting up devices.")
     process_fedsalplus(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
