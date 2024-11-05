@@ -45,10 +45,10 @@ def process_fedavg(clients, server):
     print(f"Wrote to file: {outfile},{m_outfile}")
 
 
-def process_fedsal(clients, server):
+def process_fedsal(args, clients, server):
     print("\nDone setting up fedsal devices.")
     print("Running fedsal ...")
-    frame,metrics_frame,metrics = run_fedsal(clients, server, args.num_rounds, args.local_epoch, EPS_1_sal, EPS_2_sal)
+    frame,metrics_frame,metrics = run_fedsal(args, clients, server, args.num_rounds, args.local_epoch, EPS_1_sal, EPS_2_sal)
     if args.repeat is None:
         outfile = os.path.join(outpath, f'accuracy_fedsal{suffix}.csv')
         m_outfile = os.path.join(outpath, f'M_accuracy_fedsal{suffix}.csv')
@@ -63,11 +63,11 @@ def process_fedsal(clients, server):
     print(f"Wrote to file: {outfile},{m_outfile}")
 
 
-def process_fedsalplus( clients,server):
+def process_fedsalplus(args, clients, server):
     print("\nDone setting up fedsal plus devices.")
 
     print("Running fedsal plus ...")
-    frame,metrics_frame,metrics = run_fedsal(clients, server, args.num_rounds, args.local_epoch, EPS_1_sal, EPS_2_sal)
+    frame,metrics_frame,metrics = run_fedsal(args, clients, server, args.num_rounds, args.local_epoch, EPS_1_sal, EPS_2_sal)
     if args.repeat is None:
         outfile = os.path.join(outpath, f'accuracy_fedsalplus{args.type_init}.csv')
         m_outfile = os.path.join(outpath, f'M_accuracy_fedsalplus{args.type_init}.csv')
@@ -198,22 +198,14 @@ if __name__ == '__main__':
     init_clients, init_server, init_idx_clients = setupGC.setup_devices(splitedData, args)
     print("\nDone setting up devices.")
 
-    process_selftrain(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server), local_epoch=100)
-    process_fedavg(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
-    process_fedsal(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
+#     process_selftrain(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server), local_epoch=100)
+#     process_fedavg(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
+#     process_fedsal(args, clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
+    
     args.alg='salstr'
     args.n_se = args.n_rw + args.n_dg
-splitedData, df_stats = setupGC.prepareData_multiDS(args,args.datapath, args.data_group, args.batch_size, convert_x=args.convert_x, seed=seed_dataSplit)
-    print("Done")
-
-    # save statistics of data on clients
-    if args.repeat is None:
-        outf = os.path.join(outpath, f'stats_trainData{suffix}.csv')
-    else:
-        outf = os.path.join(outpath, "repeats", f'{args.repeat}_stats_trainData{suffix}.csv')
-    df_stats.to_csv(outf)
-    print(f"Wrote to {outf}")
-
+    splitedData, df_stats = setupGC.prepareData_multiDS(args,args.datapath, args.data_group, args.batch_size, convert_x=args.convert_x, seed=seed_dataSplit)
     init_clients, init_server, init_idx_clients = setupGC.setup_devices(splitedData, args)
     print("\nDone setting up devices.")
-    process_fedsalplus(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
+    
+    process_fedsalplus(args, clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))

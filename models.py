@@ -51,16 +51,15 @@ class GIN(torch.nn.Module):
 
     def loss(self, pred, label):
         return F.nll_loss(pred, label)
+    
 class serverGIN_dc(torch.nn.Module):
     def __init__(self, n_se, nlayer, nhid):
         super(serverGIN_dc, self).__init__()
 
         self.embedding_s = torch.nn.Linear(n_se, nhid)
-        self.Whp = torch.nn.Linear(nhid + nhid, nhid)
-
         self.graph_convs_s = torch.nn.ModuleList()
         self.nn1_s = torch.nn.Sequential(torch.nn.Linear(nhid + nhid, nhid), torch.nn.ReLU(), torch.nn.Linear(nhid, nhid))
-        self.graph_convs_s.append(GINConv(self.nn1))
+        self.graph_convs_s.append(GINConv(self.nn1_s))
         self.graph_convs_s_gcn = torch.nn.ModuleList()
         self.graph_convs_s_gcn.append(GCNConv(nhid, nhid))
         
@@ -101,7 +100,7 @@ class GIN_dc(torch.nn.Module):
         x, edge_index, batch, s = data.x, data.edge_index, data.batch, data.stc_enc
         x = self.pre(x)
         s = self.embedding_s(s)
-        for i in range(len(self.graph_convs)):
+        for i in range(len(self.graph_convs_s)):
             x = torch.cat((x, s), -1)
             x = self.graph_convs_s[i](x, edge_index)
             x = F.relu(x)

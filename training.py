@@ -78,7 +78,7 @@ def run_fedavg(clients, server, COMMUNICATION_ROUNDS, local_epoch, samp=None, fr
     metrics_frame = pd.DataFrame(metrics)
     return frame, metrics_frame,temp_metrics
 
-def run_fedsal(clients, server, COMMUNICATION_ROUNDS, local_epoch, EPS_1, EPS_2):
+def run_fedsal(args, clients, server, COMMUNICATION_ROUNDS, local_epoch, EPS_1, EPS_2):
     cluster_indices = [np.arange(len(clients)).astype("int")]
     client_clusters = [[clients[i] for i in idcs] for idcs in cluster_indices]
 
@@ -99,7 +99,7 @@ def run_fedsal(clients, server, COMMUNICATION_ROUNDS, local_epoch, EPS_1, EPS_2)
         
         if c_round == 1:
             for client in clients:
-                client.download_from_server(server)
+                client.download_from_server_se(args, server)
         
         participating_clients = server.randomSample_clients(clients, frac=1.0)
         

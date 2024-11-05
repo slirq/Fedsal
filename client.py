@@ -26,6 +26,16 @@ class Client_GC():
         self.convWeightsNorm = 0.
         self.convDWsNorm = 0.
 
+    def download_from_server_se(self, args, server):
+        self.gconvNames = server.W.keys()
+        if args.alg == 'salstr':
+            for k in server.W:
+                if '_s' in k:
+                    self.W[k].data = server.W[k].data.clone()
+        else:
+            for k in server.W:
+                self.W[k].data = server.W[k].data.clone()
+
     def download_from_server(self, server):
         self.gconvNames = server.W.keys()
         for k in server.W:
