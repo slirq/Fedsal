@@ -198,9 +198,9 @@ if __name__ == '__main__':
     init_clients, init_server, init_idx_clients = setupGC.setup_devices(splitedData, args)
     print("\nDone setting up devices.")
 
-#     process_selftrain(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server), local_epoch=100)
-#     process_fedavg(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
-#     process_fedsal(args, clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
+    process_selftrain(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server), local_epoch=100)
+    process_fedavg(clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
+    process_fedsal(args, clients=copy.deepcopy(init_clients), server=copy.deepcopy(init_server))
     
     args.alg='salstr'
     args.n_se = args.n_rw + args.n_dg
